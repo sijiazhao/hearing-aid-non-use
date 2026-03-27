@@ -8,14 +8,13 @@ const state = {
 // Section configuration: [sectionId, shouldShow function]
 // Ownership values: "yes-daily", "yes-not-often", "yes-not-wearing", "no"
 const hasAids = () => state.hasHearingAids && state.hasHearingAids.startsWith("yes");
-const needsReasons = () => state.hasHearingAids === "yes-not-often" || state.hasHearingAids === "yes-not-wearing";
+const needsReasons = () => state.hasHearingAids === "yes-not-wearing";
 
 const sections = [
   { id: "section-welcome", show: () => true },
   { id: "section-about", show: () => true },
   { id: "section-ownership", show: () => true },
   { id: "section-usage", show: () => hasAids() && state.hasHearingAids !== "yes-not-wearing" },
-  { id: "section-satisfaction", show: () => hasAids() && state.hasHearingAids !== "yes-not-wearing" },
   { id: "section-reasons", show: () => needsReasons() },
   { id: "section-comments", show: () => hasAids() },
   { id: "section-thankyou", show: () => true },
@@ -151,14 +150,6 @@ function collectResponses() {
   responses.wearFrequency = getRadioValue("wear-frequency");
   responses.situations = getCheckboxValues("situations");
 
-  // Listening, energy, and daily life
-  responses.listeningEffort = getRadioValue("listening-effort");
-  responses.effortFatigueLink = getRadioValue("effort-fatigue-link");
-  responses.generalFatigue = getRadioValue("general-fatigue");
-  responses.motivationChange = getRadioValue("motivation-change");
-  responses.socialAvoidance = getRadioValue("social-avoidance");
-  responses.aidsReduceEffort = getRadioValue("aids-reduce-effort");
-
   // Reasons for non-use
   responses.reasons = getCheckboxValues("reasons");
   responses.reasonOtherText = document.getElementById("reason-other-text").value;
@@ -215,17 +206,6 @@ function formatResponses(responses) {
     if (responses.situations.length > 0) {
       lines.push(`Situations: ${responses.situations.join(", ")}`);
     }
-    lines.push("");
-  }
-
-  if (responses.listeningEffort) {
-    lines.push("--- Listening, energy, and daily life ---");
-    lines.push(`Listening effort: ${responses.listeningEffort}/5`);
-    if (responses.effortFatigueLink) lines.push(`Listening contributes to tiredness: ${responses.effortFatigueLink}/5`);
-    if (responses.generalFatigue) lines.push(`General fatigue: ${responses.generalFatigue}/5`);
-    if (responses.motivationChange) lines.push(`Motivation change: ${responses.motivationChange}/5`);
-    if (responses.socialAvoidance) lines.push(`Social avoidance due to effort: ${responses.socialAvoidance}/5`);
-    if (responses.aidsReduceEffort) lines.push(`Hearing aids reduce effort: ${responses.aidsReduceEffort}/5`);
     lines.push("");
   }
 
